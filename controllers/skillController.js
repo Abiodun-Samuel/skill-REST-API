@@ -12,9 +12,18 @@ export const getSkills = async (req, res) => {
 //@route POST /api/skills
 //@access Private
 export const setSkill = async (req, res) => {
-  const data = req.body.skill;
-  const skill = await Skill.create({ skill: data.toUpperCase() });
-  res.status(201).json({ message: "Skill has been added successfully" });
+  const data = req.body.skill.toUpperCase();
+
+  const skillExist = await Skill.find({ skill: data });
+
+  if (skillExist.length > 0)
+    return res.status(400).json({ message: "Skill already exist" });
+
+  const skill = await Skill.create({ skill: data });
+  if (skill)
+    return res
+      .status(201)
+      .json({ message: "Skill has been added successfully" });
 };
 
 //@desc edit skill
